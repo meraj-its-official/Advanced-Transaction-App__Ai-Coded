@@ -29,8 +29,51 @@ import { Modal } from "@/components/ui/modal";
 import { GoogleIcon, GithubIcon } from "@/components/ui/social-icons";
 
 const loginSchema = z.object({
-  email: z.string().min(1, "Please enter your email or phone number"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  email: z
+    .string()
+    .trim()
+    .min(1, { message: "E-mail or Phone Number is required" })
+    .superRefine((val, ctx) => {
+      if (!val) return;
+
+      // Check: Kya user sirf digits (ya +) type kar raha hai? -> Toh Phone Number validate karo
+      const isPhoneAttempt = /^[0-9+]+$/.test(val);
+
+      if (isPhoneAttempt) {
+        if (!/^[6-9]\d{9}$/.test(val)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Please enter a valid 10-digit Indian phone number",
+          });
+        }
+      }
+      // Warna (agar letters hain ya '@' hai) -> Email validate karo
+      else {
+        const isEmail = z.string().email().safeParse(val);
+        if (!isEmail.success) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Invalid email format (e.g., example@gmail.com).",
+          });
+        }
+      }
+    }),
+  password: z
+    .string()
+    .trim()
+    .regex(/[^""]/, { message: "Password is required" })
+    .min(8, { message: "Password must be at least 8 characters long" })
+    .max(20, { message: "Password must be less than 20 characters long" })
+    .regex(/[A-Z]/, {
+      message: "Password must contain at least one uppercase letter",
+    })
+    .regex(/[a-z]/, {
+      message: "Password must contain at least one lowercase letter",
+    })
+    .regex(/[0-9]/, { message: "Password must contain at least one number" })
+    .regex(/[^a-zA-Z0-9]/, {
+      message: "Password must contain at least one special character",
+    }),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;

@@ -1,30 +1,42 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import toast from 'react-hot-toast';
-import { User, Mail, Phone, Lock, Eye, EyeOff, UserPlus } from 'lucide-react';
-import { authApi } from '@/lib/api';
-import { authClient } from '@/lib/better-auth-client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { GoogleIcon, GithubIcon } from '@/components/ui/social-icons';
+import React, { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import toast from "react-hot-toast";
+import { User, Mail, Phone, Lock, Eye, EyeOff, UserPlus } from "lucide-react";
+import { authApi } from "@/lib/api";
+import { authClient } from "@/lib/better-auth-client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { GoogleIcon, GithubIcon } from "@/components/ui/social-icons";
 
 const registerSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Please enter a valid email address'),
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email address"),
   phone: z
     .string()
-    .regex(/^(?:\+91)?[6-9]\d{9}$/, 'Please enter a valid 10-digit Indian phone number'),
+    .length(10, "Please enter a valid 10-digit Indian phone number")
+    .regex(/^[0-9]+$/, "Please enter a valid 10-digit Indian phone number"),
   password: z
     .string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .regex(/[0-9]/, 'Password must contain at least one number'),
+    .trim()
+    .regex(/[^""]/, { message: "Password is required" })
+    .min(8, { message: "Password must be at least 8 characters long" })
+    .max(20, { message: "Password must be less than 20 characters long" })
+    .regex(/[A-Z]/, {
+      message: "Password must contain at least one uppercase letter",
+    })
+    .regex(/[a-z]/, {
+      message: "Password must contain at least one lowercase letter",
+    })
+    .regex(/[0-9]/, { message: "Password must contain at least one number" })
+    .regex(/[^a-zA-Z0-9]/, {
+      message: "Password must contain at least one special character",
+    }),
 });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
@@ -33,9 +45,11 @@ export default function RegisterPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [socialLoading, setSocialLoading] = useState<'google' | 'github' | null>(null);
+  const [socialLoading, setSocialLoading] = useState<
+    "google" | "github" | null
+  >(null);
 
-  const handleSocialSignUp = async (provider: 'google' | 'github') => {
+  const handleSocialSignUp = async (provider: "google" | "github") => {
     try {
       setSocialLoading(provider);
       await authClient.signIn.social({
@@ -56,10 +70,10 @@ export default function RegisterPage() {
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      name: '',
-      email: '',
-      phone: '',
-      password: '',
+      name: "",
+      email: "",
+      phone: "",
+      password: "",
     },
   });
 
@@ -77,8 +91,10 @@ export default function RegisterPage() {
         });
         if (!error && data?.user) {
           betterAuthSuccess = true;
-          toast.success('Account created successfully! Please sign in to continue.');
-          router.push('/login');
+          toast.success(
+            "Account created successfully! Please sign in to continue.",
+          );
+          router.push("/login");
           return;
         }
       } catch {
@@ -89,12 +105,14 @@ export default function RegisterPage() {
         await authApi.register({
           name: values.name.trim(),
           email: values.email.trim(),
-          phone: values.phone.replace(/^\+91/, '').replace(/\D/g, ''),
+          phone: values.phone.replace(/^\+91/, "").replace(/\D/g, ""),
           password: values.password,
         });
 
-        toast.success('Account created successfully! Please sign in to continue.');
-        router.push('/login');
+        toast.success(
+          "Account created successfully! Please sign in to continue.",
+        );
+        router.push("/login");
       }
     } catch (err: unknown) {
       const error = err as {
@@ -105,7 +123,7 @@ export default function RegisterPage() {
         error.response?.data?.error ||
         error.response?.data?.message ||
         error.message ||
-        'Failed to register account. Please check your details.';
+        "Failed to register account. Please check your details.";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -115,7 +133,9 @@ export default function RegisterPage() {
   return (
     <div className="w-full bg-[#12121a] border border-[#1e1e2e] rounded-2xl p-6 sm:p-8 shadow-2xl">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white tracking-tight">Create Account</h2>
+        <h2 className="text-2xl font-bold text-white tracking-tight">
+          Create Account
+        </h2>
         <p className="text-sm text-slate-400 mt-1">
           Open a zero-fee digital wallet with PayFlow
         </p>
@@ -125,11 +145,11 @@ export default function RegisterPage() {
       <div className="grid grid-cols-2 gap-3 mb-6">
         <button
           type="button"
-          onClick={() => handleSocialSignUp('google')}
+          onClick={() => handleSocialSignUp("google")}
           disabled={loading || !!socialLoading}
           className="flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-xl border border-[#2d2d44] bg-[#161622] hover:bg-[#1e1e30] text-slate-200 text-sm font-medium transition-all hover:border-slate-500 disabled:opacity-50 cursor-pointer shadow-sm active:scale-[0.98]"
         >
-          {socialLoading === 'google' ? (
+          {socialLoading === "google" ? (
             <div className="w-5 h-5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
           ) : (
             <GoogleIcon className="w-5 h-5" />
@@ -139,11 +159,11 @@ export default function RegisterPage() {
 
         <button
           type="button"
-          onClick={() => handleSocialSignUp('github')}
+          onClick={() => handleSocialSignUp("github")}
           disabled={loading || !!socialLoading}
           className="flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-xl border border-[#2d2d44] bg-[#161622] hover:bg-[#1e1e30] text-slate-200 text-sm font-medium transition-all hover:border-slate-500 disabled:opacity-50 cursor-pointer shadow-sm active:scale-[0.98]"
         >
-          {socialLoading === 'github' ? (
+          {socialLoading === "github" ? (
             <div className="w-5 h-5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
           ) : (
             <GithubIcon className="w-5 h-5 text-white" />
@@ -158,7 +178,9 @@ export default function RegisterPage() {
           <div className="w-full border-t border-[#1e1e2e]" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-[#12121a] px-3 text-slate-500 font-medium">Or register with email</span>
+          <span className="bg-[#12121a] px-3 text-slate-500 font-medium">
+            Or register with email
+          </span>
         </div>
       </div>
 
@@ -168,7 +190,7 @@ export default function RegisterPage() {
           placeholder="e.g. Rahul Sharma"
           leftIcon={<User className="w-4 h-4" />}
           error={errors.name?.message}
-          {...register('name')}
+          {...register("name")}
         />
 
         <Input
@@ -177,7 +199,7 @@ export default function RegisterPage() {
           placeholder="name@example.com"
           leftIcon={<Mail className="w-4 h-4" />}
           error={errors.email?.message}
-          {...register('email')}
+          {...register("email")}
         />
 
         <Input
@@ -187,12 +209,12 @@ export default function RegisterPage() {
           hint="10-digit Indian mobile number"
           leftIcon={<Phone className="w-4 h-4" />}
           error={errors.phone?.message}
-          {...register('phone')}
+          {...register("phone")}
         />
 
         <Input
           label="Password"
-          type={showPassword ? 'text' : 'password'}
+          type={showPassword ? "text" : "password"}
           placeholder="Min 8 characters, 1 uppercase, 1 number"
           leftIcon={<Lock className="w-4 h-4" />}
           rightIcon={
@@ -204,7 +226,7 @@ export default function RegisterPage() {
           }
           onRightIconClick={() => setShowPassword(!showPassword)}
           error={errors.password?.message}
-          {...register('password')}
+          {...register("password")}
         />
 
         <Button
@@ -219,7 +241,7 @@ export default function RegisterPage() {
       </form>
 
       <div className="mt-6 pt-6 border-t border-[#1e1e2e] text-center text-sm text-slate-400">
-        Already have an account?{' '}
+        Already have an account?{" "}
         <Link
           href="/login"
           className="font-semibold text-indigo-400 hover:text-indigo-300 hover:underline transition-colors"
