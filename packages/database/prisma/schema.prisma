@@ -1,0 +1,191 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum KycStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum TransactionType {
+  TRANSFER
+  TOP_UP
+  WITHDRAWAL
+  PAYMENT
+  REFUND
+}
+
+enum TransactionStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REVERSED
+}
+
+enum NotificationType {
+  TRANSACTION
+  SECURITY
+  PROMOTION
+  SYSTEM
+}
+
+enum FraudAlertStatus {
+  OPEN
+  REVIEWING
+  RESOLVED
+  FALSE_POSITIVE
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  phone         String?   @unique
+  name          String
+  passwordHash  String?
+  pin           String?
+  kycStatus     KycStatus @default(PENDING)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  wallet               Wallet?
+  bankAccounts         BankAccount[]
+  notifications        Notification[]
+  sessions             Session[]
+  passwordResetTokens  PasswordResetToken[]
+  accounts             Account[]
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id         String   @id @default(cuid())
+  userId     String
+  token      String   @unique
+  expiresAt  DateTime
+  ipAddress  String?
+  userAgent  String?
+  deviceInfo Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Wallet {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  balance   Decimal  @default(0) @db.Decimal(18, 2)
+  currency  String   @default("INR")
+  isLocked  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user             User          @relation(fields: [userId], references: [id])
+  sentTransactions Transaction[] @relation("FromWallet")
+  rcvdTransactions Transaction[] @relation("ToWallet")
+}
+
+model Transaction {
+  id            String            @id @default(cuid())
+  fromWalletId  String?
+  toWalletId    String?
+  amount        Decimal           @db.Decimal(18, 2)
+  currency      String            @default("INR")
+  type          TransactionType
+  status        TransactionStatus @default(PENDING)
+  description   String?
+  referenceId   String?           @unique @default(cuid())
+  metadata      Json?
+  failureReason String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  fromWallet  Wallet?      @relation("FromWallet", fields: [fromWalletId], references: [id])
+  toWallet    Wallet?      @relation("ToWallet", fields: [toWalletId], references: [id])
+  fraudAlerts FraudAlert[]
+}
+
+model BankAccount {
+  id            String   @id @default(cuid())
+  userId        String
+  accountNumber String
+  ifscCode      String
+  bankName      String
+  holderName    String
+  isVerified    Boolean  @default(false)
+  isPrimary     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  title     String
+  body      String
+  type      NotificationType
+  isRead    Boolean          @default(false)
+  metadata  Json?
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model FraudAlert {
+  id            String           @id @default(cuid())
+  transactionId String
+  riskScore     Float
+  reasons       String[]
+  status        FraudAlertStatus @default(OPEN)
+  resolvedBy    String?
+  createdAt     DateTime         @default(now())
+
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+}

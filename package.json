@@ -1,0 +1,27 @@
+{
+  "name": "wallet-web-app",
+  "private": true,
+  "packageManager": "npm@11.20.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "db:push": "turbo db:push --filter=@wallet-web-app/database",
+    "db:generate": "turbo db:generate --filter=@wallet-web-app/database",
+    "db:studio": "cd packages/database && npx prisma studio"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "prisma": "^5.22.0",
+    "turbo": "^2.0.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
