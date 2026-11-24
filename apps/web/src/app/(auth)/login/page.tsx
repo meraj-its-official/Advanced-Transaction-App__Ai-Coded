@@ -1,25 +1,36 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import toast from 'react-hot-toast';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, CheckCircle2, AlertTriangle, KeyRound, Phone, RefreshCw } from 'lucide-react';
-import api, { authApi } from '@/lib/api';
-import { setTokens } from '@/lib/auth';
-import { authClient } from '@/lib/better-auth-client';
-import { useAuthStore } from '@/store/auth.store';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Modal } from '@/components/ui/modal';
-import { GoogleIcon, GithubIcon } from '@/components/ui/social-icons';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import toast from "react-hot-toast";
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  CheckCircle2,
+  AlertTriangle,
+  KeyRound,
+  Phone,
+  RefreshCw,
+} from "lucide-react";
+import api, { authApi } from "@/lib/api";
+import { setTokens } from "@/lib/auth";
+import { authClient } from "@/lib/better-auth-client";
+import { useAuthStore } from "@/store/auth.store";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Modal } from "@/components/ui/modal";
+import { GoogleIcon, GithubIcon } from "@/components/ui/social-icons";
 
 const loginSchema = z.object({
-  email: z.string().min(1, 'Please enter your email or phone number'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  email: z.string().min(1, "Please enter your email or phone number"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -29,18 +40,20 @@ export default function LoginPage() {
   const { setUser, setWallet } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [socialLoading, setSocialLoading] = useState<'google' | 'github' | null>(null);
+  const [socialLoading, setSocialLoading] = useState<
+    "google" | "github" | null
+  >(null);
 
   // Forgot password state
   const [isForgotOpen, setIsForgotOpen] = useState(false);
-  const [forgotStep, setForgotStep] = useState<'request' | 'reset'>('request');
-  const [forgotIdentifier, setForgotIdentifier] = useState('');
-  const [forgotOtp, setForgotOtp] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [forgotStep, setForgotStep] = useState<"request" | "reset">("request");
+  const [forgotIdentifier, setForgotIdentifier] = useState("");
+  const [forgotOtp, setForgotOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [showForgotNewPassword, setShowForgotNewPassword] = useState(false);
   const [isSubmittingForgot, setIsSubmittingForgot] = useState(false);
-  const [forgotError, setForgotError] = useState('');
+  const [forgotError, setForgotError] = useState("");
   const [deliveryInfo, setDeliveryInfo] = useState<{
     maskedEmail?: string;
     maskedPhone?: string;
@@ -65,12 +78,12 @@ export default function LoginPage() {
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
-  const handleSocialSignIn = async (provider: 'google' | 'github') => {
+  const handleSocialSignIn = async (provider: "google" | "github") => {
     try {
       setSocialLoading(provider);
       await authClient.signIn.social({
@@ -100,31 +113,38 @@ export default function LoginPage() {
           betterAuthSuccess = true;
           const sessionRes = await authClient.getSession();
           if (sessionRes?.data?.session?.token) {
-            setTokens(sessionRes.data.session.token, sessionRes.data.session.token);
+            setTokens(
+              sessionRes.data.session.token,
+              sessionRes.data.session.token,
+            );
           }
 
           try {
             const [profileRes, walletRes] = await Promise.all([
-              api.get('/auth/profile'),
-              api.get('/wallet'),
+              api.get("/auth/profile"),
+              api.get("/wallet"),
             ]);
             setUser(profileRes.data?.data || profileRes.data);
             setWallet(walletRes.data?.data || walletRes.data);
           } catch {
             setUser({
               id: data.user.id,
-              name: data.user.name || 'User',
+              name: data.user.name || "User",
               email: data.user.email,
-              phone: (data.user as { phone?: string }).phone || '',
+              phone: (data.user as { phone?: string }).phone || "",
               avatar: data.user.image || undefined,
-              isVerified: (data.user as { emailVerified?: boolean }).emailVerified || false,
+              isVerified:
+                (data.user as { emailVerified?: boolean }).emailVerified ||
+                false,
               hasPin: false,
-              createdAt: data.user.createdAt ? new Date(data.user.createdAt).toISOString() : new Date().toISOString(),
+              createdAt: data.user.createdAt
+                ? new Date(data.user.createdAt).toISOString()
+                : new Date().toISOString(),
             });
           }
 
-          toast.success(`Welcome back, ${data.user.name || 'User'}!`);
-          router.push('/dashboard');
+          toast.success(`Welcome back, ${data.user.name || "User"}!`);
+          router.push("/dashboard");
           return;
         }
       } catch {
@@ -137,7 +157,7 @@ export default function LoginPage() {
         const data = res.data?.data || res.data;
 
         if (!data?.accessToken) {
-          throw new Error('Authentication tokens missing in response');
+          throw new Error("Authentication tokens missing in response");
         }
 
         // Store tokens
@@ -147,8 +167,8 @@ export default function LoginPage() {
         if (data.user) setUser(data.user);
         if (data.wallet) setWallet(data.wallet);
 
-        toast.success(`Welcome back, ${data.user?.name || 'User'}!`);
-        router.push('/dashboard');
+        toast.success(`Welcome back, ${data.user?.name || "User"}!`);
+        router.push("/dashboard");
       }
     } catch (err: unknown) {
       const error = err as {
@@ -159,7 +179,7 @@ export default function LoginPage() {
         error.response?.data?.error ||
         error.response?.data?.message ||
         error.message ||
-        'Failed to sign in. Please verify your credentials.';
+        "Failed to sign in. Please verify your credentials.";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -168,9 +188,9 @@ export default function LoginPage() {
 
   const handleRequestResetCode = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    setForgotError('');
+    setForgotError("");
     if (!forgotIdentifier.trim()) {
-      setForgotError('Please enter your email or phone number');
+      setForgotError("Please enter your email or phone number");
       return;
     }
 
@@ -178,7 +198,10 @@ export default function LoginPage() {
       setIsSubmittingForgot(true);
       const res = await authApi.forgotPassword(forgotIdentifier.trim());
       const data = res.data?.data || res.data;
-      toast.success(data?.message || 'Verification code sent to your email and mobile number!');
+      toast.success(
+        data?.message ||
+          "Verification code sent to your email and mobile number!",
+      );
       setDeliveryInfo({
         maskedEmail: data?.maskedEmail,
         maskedPhone: data?.maskedPhone,
@@ -186,10 +209,14 @@ export default function LoginPage() {
         smsSent: data?.smsSent,
       });
       setResendCooldown(60);
-      setForgotStep('reset');
+      setForgotStep("reset");
     } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } }; message?: string };
-      const msg = error.response?.data?.message || error.message || 'Account not found';
+      const error = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      const msg =
+        error.response?.data?.message || error.message || "Account not found";
       setForgotError(msg);
       toast.error(msg);
     } finally {
@@ -199,15 +226,15 @@ export default function LoginPage() {
 
   const handleResetPasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setForgotError('');
+    setForgotError("");
 
     if (!newPassword || newPassword.length < 6) {
-      setForgotError('New password must be at least 6 characters');
+      setForgotError("New password must be at least 6 characters");
       return;
     }
 
     if (newPassword !== confirmNewPassword) {
-      setForgotError('Passwords do not match');
+      setForgotError("Passwords do not match");
       return;
     }
 
@@ -219,17 +246,25 @@ export default function LoginPage() {
         otp: forgotOtp,
       });
 
-      toast.success('Password reset successfully! Please sign in with your new password.');
-      setValue('email', forgotIdentifier.trim());
+      toast.success(
+        "Password reset successfully! Please sign in with your new password.",
+      );
+      setValue("email", forgotIdentifier.trim());
       setIsForgotOpen(false);
-      setForgotStep('request');
-      setNewPassword('');
-      setConfirmNewPassword('');
-      setForgotOtp('');
-      setForgotError('');
+      setForgotStep("request");
+      setNewPassword("");
+      setConfirmNewPassword("");
+      setForgotOtp("");
+      setForgotError("");
     } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } }; message?: string };
-      const msg = error.response?.data?.message || error.message || 'Failed to reset password';
+      const error = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      const msg =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to reset password";
       setForgotError(msg);
       toast.error(msg);
     } finally {
@@ -240,7 +275,9 @@ export default function LoginPage() {
   return (
     <div className="w-full bg-[#12121a] border border-[#1e1e2e] rounded-2xl p-6 sm:p-8 shadow-2xl">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white tracking-tight">Sign In</h2>
+        <h2 className="text-2xl font-bold text-white tracking-tight">
+          Sign In
+        </h2>
         <p className="text-sm text-slate-400 mt-1">
           Access your digital wallet and send money instantly
         </p>
@@ -250,11 +287,11 @@ export default function LoginPage() {
       <div className="grid grid-cols-2 gap-3 mb-6">
         <button
           type="button"
-          onClick={() => handleSocialSignIn('google')}
+          onClick={() => handleSocialSignIn("google")}
           disabled={loading || !!socialLoading}
           className="flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-xl border border-[#2d2d44] bg-[#161622] hover:bg-[#1e1e30] text-slate-200 text-sm font-medium transition-all hover:border-slate-500 disabled:opacity-50 cursor-pointer shadow-sm active:scale-[0.98]"
         >
-          {socialLoading === 'google' ? (
+          {socialLoading === "google" ? (
             <div className="w-5 h-5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
           ) : (
             <GoogleIcon className="w-5 h-5" />
@@ -264,11 +301,11 @@ export default function LoginPage() {
 
         <button
           type="button"
-          onClick={() => handleSocialSignIn('github')}
+          onClick={() => handleSocialSignIn("github")}
           disabled={loading || !!socialLoading}
           className="flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-xl border border-[#2d2d44] bg-[#161622] hover:bg-[#1e1e30] text-slate-200 text-sm font-medium transition-all hover:border-slate-500 disabled:opacity-50 cursor-pointer shadow-sm active:scale-[0.98]"
         >
-          {socialLoading === 'github' ? (
+          {socialLoading === "github" ? (
             <div className="w-5 h-5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
           ) : (
             <GithubIcon className="w-5 h-5 text-white" />
@@ -283,7 +320,9 @@ export default function LoginPage() {
           <div className="w-full border-t border-[#1e1e2e]" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-[#12121a] px-3 text-slate-500 font-medium">Or continue with</span>
+          <span className="bg-[#12121a] px-3 text-slate-500 font-medium">
+            Or continue with
+          </span>
         </div>
       </div>
 
@@ -294,12 +333,12 @@ export default function LoginPage() {
           placeholder="name@example.com or 9856241536"
           leftIcon={<Mail className="w-4 h-4" />}
           error={errors.email?.message}
-          {...register('email')}
+          {...register("email")}
         />
 
         <Input
           label="Password"
-          type={showPassword ? 'text' : 'password'}
+          type={showPassword ? "text" : "password"}
           placeholder="••••••••"
           leftIcon={<Lock className="w-4 h-4" />}
           rightIcon={
@@ -311,7 +350,7 @@ export default function LoginPage() {
           }
           onRightIconClick={() => setShowPassword(!showPassword)}
           error={errors.password?.message}
-          {...register('password')}
+          {...register("password")}
         />
 
         <div className="flex items-center justify-between text-xs pt-1">
@@ -325,12 +364,12 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => {
-              setForgotIdentifier('');
-              setForgotOtp('');
-              setNewPassword('');
-              setConfirmNewPassword('');
-              setForgotError('');
-              setForgotStep('request');
+              setForgotIdentifier("");
+              setForgotOtp("");
+              setNewPassword("");
+              setConfirmNewPassword("");
+              setForgotError("");
+              setForgotStep("request");
               setIsForgotOpen(true);
             }}
             className="text-indigo-400 hover:text-indigo-300 hover:underline cursor-pointer transition-colors"
@@ -351,7 +390,7 @@ export default function LoginPage() {
       </form>
 
       <div className="mt-6 pt-6 border-t border-[#1e1e2e] text-center text-sm text-slate-400">
-        Don&apos;t have an account?{' '}
+        Don&apos;t have an account?{" "}
         <Link
           href="/register"
           className="font-semibold text-indigo-400 hover:text-indigo-300 hover:underline transition-colors"
@@ -365,17 +404,18 @@ export default function LoginPage() {
         isOpen={isForgotOpen}
         onClose={() => {
           setIsForgotOpen(false);
-          setForgotError('');
+          setForgotError("");
         }}
         title="Reset Your Password"
         description="Recover access to your PayFlow account and digital wallet"
       >
-        {forgotStep === 'request' ? (
+        {forgotStep === "request" ? (
           <form onSubmit={handleRequestResetCode} className="space-y-4 mt-2">
             <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-xs text-indigo-300 flex items-start gap-2.5">
               <KeyRound className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
               <p>
-                Enter your registered email address or phone number. We will send you a verification code to securely reset your password.
+                Enter your registered email address or phone number. We will
+                send you a verification code to securely reset your password.
               </p>
             </div>
 
@@ -422,7 +462,8 @@ export default function LoginPage() {
                 <span>Verification Code Dispatched!</span>
               </div>
               <p className="text-[11px] text-slate-400 leading-relaxed">
-                A 6-digit verification code has been dispatched to your registered contacts:
+                A 6-digit verification code has been dispatched to your
+                registered contacts:
               </p>
               <div className="flex flex-col sm:flex-row gap-2 pt-1 text-[11px]">
                 {deliveryInfo.maskedEmail && (
@@ -458,13 +499,15 @@ export default function LoginPage() {
                 onClick={() => handleRequestResetCode()}
                 className="text-indigo-400 hover:text-indigo-300 hover:underline disabled:opacity-50 disabled:no-underline font-medium cursor-pointer"
               >
-                {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code'}
+                {resendCooldown > 0
+                  ? `Resend in ${resendCooldown}s`
+                  : "Resend Code"}
               </button>
             </div>
 
             <Input
               label="New Password"
-              type={showForgotNewPassword ? 'text' : 'password'}
+              type={showForgotNewPassword ? "text" : "password"}
               placeholder="At least 6 characters"
               leftIcon={<Lock className="w-4 h-4" />}
               rightIcon={
@@ -474,7 +517,9 @@ export default function LoginPage() {
                   <Eye className="w-4 h-4 text-slate-400" />
                 )
               }
-              onRightIconClick={() => setShowForgotNewPassword(!showForgotNewPassword)}
+              onRightIconClick={() =>
+                setShowForgotNewPassword(!showForgotNewPassword)
+              }
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               required
@@ -482,7 +527,7 @@ export default function LoginPage() {
 
             <Input
               label="Confirm New Password"
-              type={showForgotNewPassword ? 'text' : 'password'}
+              type={showForgotNewPassword ? "text" : "password"}
               placeholder="Re-enter new password"
               leftIcon={<Lock className="w-4 h-4" />}
               value={confirmNewPassword}
@@ -498,7 +543,8 @@ export default function LoginPage() {
                   </span>
                 ) : (
                   <span className="text-rose-400 flex items-center gap-1 font-medium bg-rose-500/10 px-3 py-1 rounded-full border border-rose-500/20">
-                    <AlertTriangle className="w-3.5 h-3.5" /> Passwords do not match
+                    <AlertTriangle className="w-3.5 h-3.5" /> Passwords do not
+                    match
                   </span>
                 )}
               </div>
@@ -513,7 +559,7 @@ export default function LoginPage() {
             <div className="flex items-center justify-between text-xs text-slate-400">
               <button
                 type="button"
-                onClick={() => setForgotStep('request')}
+                onClick={() => setForgotStep("request")}
                 className="text-indigo-400 hover:text-indigo-300 hover:underline"
               >
                 &larr; Change email or phone
@@ -534,7 +580,11 @@ export default function LoginPage() {
                 variant="primary"
                 fullWidth
                 loading={isSubmittingForgot}
-                disabled={!newPassword || newPassword.length < 6 || newPassword !== confirmNewPassword}
+                disabled={
+                  !newPassword ||
+                  newPassword.length < 6 ||
+                  newPassword !== confirmNewPassword
+                }
               >
                 Reset Password
               </Button>
