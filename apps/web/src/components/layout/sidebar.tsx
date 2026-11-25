@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import React from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Wallet,
@@ -13,10 +13,10 @@ import {
   ShieldCheck,
   X,
   PanelLeftClose,
-} from 'lucide-react';
-import { useAuthStore } from '@/store/auth.store';
-import { getInitials } from '@/lib/utils';
-import { cn } from '@/lib/utils';
+} from "lucide-react";
+import { useAuthStore } from "@/store/auth.store";
+import { getInitials } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -27,11 +27,11 @@ interface SidebarProps {
 }
 
 const NAV_ITEMS = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/wallet', label: 'Wallet', icon: Wallet },
-  { href: '/send', label: 'Send Money', icon: Send },
-  { href: '/transactions', label: 'Transactions', icon: ArrowLeftRight },
-  { href: '/analytics', label: 'Analytics', icon: BarChart3 },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/wallet", label: "Wallet", icon: Wallet },
+  { href: "/send", label: "Send Money", icon: Send },
+  { href: "/transactions", label: "Transactions", icon: ArrowLeftRight },
+  { href: "/analytics", label: "Analytics", icon: BarChart3 },
 ];
 
 export function Sidebar({
@@ -47,7 +47,7 @@ export function Sidebar({
 
   const handleLogout = () => {
     logout();
-    router.push('/login');
+    router.push("/login");
   };
 
   const content = (
@@ -60,7 +60,9 @@ export function Sidebar({
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-bold text-lg text-white tracking-tight">PayFlow</span>
+              <span className="font-bold text-lg text-white tracking-tight">
+                PayFlow
+              </span>
               <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 font-semibold border border-indigo-500/20">
                 PRO
               </span>
@@ -96,23 +98,26 @@ export function Sidebar({
         </p>
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const isActive =
+            pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <Link
               key={item.href}
               href={item.href}
               onClick={onClose}
               className={cn(
-                'flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-sm font-medium transition-all duration-200 group',
+                "flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-sm font-medium transition-all duration-200 group",
                 isActive
-                  ? 'bg-gradient-to-r from-indigo-500/15 to-violet-500/15 text-indigo-400 border border-indigo-500/30 shadow-sm shadow-indigo-500/10'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-[#1e1e2e]'
+                  ? "bg-gradient-to-r from-indigo-500/15 to-violet-500/15 text-indigo-400 border border-indigo-500/30 shadow-sm shadow-indigo-500/10"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-[#1e1e2e]",
               )}
             >
               <Icon
                 className={cn(
-                  'w-5 h-5 transition-transform duration-200 group-hover:scale-110',
-                  isActive ? 'text-indigo-400' : 'text-slate-400 group-hover:text-slate-200'
+                  "w-5 h-5 transition-transform duration-200 group-hover:scale-110",
+                  isActive
+                    ? "text-indigo-400"
+                    : "text-slate-400 group-hover:text-slate-200",
                 )}
               />
               <span>{item.label}</span>
@@ -137,11 +142,11 @@ export function Sidebar({
           title="Click to view full Profile Card"
         >
           <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-indigo-500 to-violet-500 text-white font-bold flex items-center justify-center text-sm shrink-0 shadow group-hover:scale-105 transition-transform">
-            {user?.name ? getInitials(user.name) : 'PF'}
+            {user?.name ? getInitials(user.name) : "PF"}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-slate-200 truncate group-hover:text-white">
-              {user?.name || 'PayFlow User'}
+              {user?.name || "PayFlow User"}
             </p>
             <p className="text-xs text-indigo-400 truncate group-hover:underline flex items-center gap-1">
               Profile Card →
@@ -167,10 +172,10 @@ export function Sidebar({
       {/* Desktop sidebar with hide/show transition */}
       <aside
         className={cn(
-          'hidden md:flex flex-col h-screen sticky top-0 shrink-0 z-30 transition-all duration-300 ease-in-out border-r border-[#1e1e2e]',
-          isVisible
-            ? 'w-64 opacity-100 translate-x-0'
-            : 'w-0 opacity-0 -translate-x-full overflow-hidden pointer-events-none border-none'
+          "hidden md:flex flex-col h-screen sticky top-0 shrink-0 z-30 transition-all duration-300 ease-in-out border-r border-[#1e1e2e]",
+          !isVisible
+            ? "w-64 opacity-100 translate-x-0"
+            : "w-0 opacity-0 -translate-x-full overflow-hidden pointer-events-none border-none",
         )}
       >
         {content}

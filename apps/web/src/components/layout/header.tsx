@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Bell,
   Menu,
@@ -9,11 +9,11 @@ import {
   CreditCard,
   Send,
   Download,
-} from 'lucide-react';
-import { useAuthStore } from '@/store/auth.store';
-import { useNotificationsStore } from '@/store/notifications.store';
-import { getInitials, formatRelativeDate } from '@/lib/utils';
-import { cn } from '@/lib/utils';
+} from "lucide-react";
+import { useAuthStore } from "@/store/auth.store";
+import { useNotificationsStore } from "@/store/notifications.store";
+import { getInitials, formatRelativeDate } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -22,19 +22,25 @@ interface HeaderProps {
   isSidebarVisible?: boolean;
 }
 
-export function Header({ onMenuClick, onOpenProfile, title, isSidebarVisible }: HeaderProps) {
+export function Header({
+  onMenuClick,
+  onOpenProfile,
+  title,
+  isSidebarVisible,
+}: HeaderProps) {
   const { user } = useAuthStore();
-  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotificationsStore();
+  const { notifications, unreadCount, markAsRead, markAllAsRead } =
+    useNotificationsStore();
   const [showNotifications, setShowNotifications] = useState(false);
 
   const getNotifIcon = (type: string) => {
     switch (type) {
-      case 'PAYMENT_RECEIVED':
+      case "PAYMENT_RECEIVED":
         return <Download className="w-4 h-4 text-emerald-400" />;
-      case 'PAYMENT_SENT':
+      case "PAYMENT_SENT":
         return <Send className="w-4 h-4 text-rose-400" />;
-      case 'WALLET_TOPPED_UP':
-      case 'WITHDRAWAL':
+      case "WALLET_TOPPED_UP":
+      case "WITHDRAWAL":
         return <CreditCard className="w-4 h-4 text-indigo-400" />;
       default:
         return <Shield className="w-4 h-4 text-amber-400" />;
@@ -42,7 +48,7 @@ export function Header({ onMenuClick, onOpenProfile, title, isSidebarVisible }: 
   };
 
   return (
-    <header className="sticky top-0 z-20 h-16 bg-[#0a0a0f]/80 backdrop-blur-md border-b border-[#1e1e2e] px-4 md:px-8 flex items-center justify-between">
+    <header className="sticky top-0 z-20 h-16  bg-[#0a0a0f]/80 backdrop-blur-md border-b border-[#090808] py-8 my-4 px-4 md:px-8 flex items-center justify-between">
       {/* Left: Menu toggle & title */}
       <div className="flex items-center gap-3">
         <button
@@ -52,8 +58,8 @@ export function Header({ onMenuClick, onOpenProfile, title, isSidebarVisible }: 
           title="Toggle Navigation Menu (Hide/Show Sidebar)"
         >
           <Menu className="w-4 h-4 text-slate-300" />
-          <span className="hidden sm:inline text-xs font-medium text-slate-400">
-            {isSidebarVisible ? 'Hide Menu' : 'Show Menu'}
+          <span className="hidden md:inline text-xs font-medium text-slate-400">
+            {!isSidebarVisible ? "Hide Menu" : "Show Menu"}
           </span>
         </button>
         {title && (
@@ -61,6 +67,11 @@ export function Header({ onMenuClick, onOpenProfile, title, isSidebarVisible }: 
             {title}
           </h1>
         )}
+        <span className="hidden md:ml-1 sm:block items-center">
+          <h1 className="py-2 text-5xl font-bold bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
+            PayFlow
+          </h1>
+        </span>
       </div>
 
       {/* Right: Actions */}
@@ -75,7 +86,7 @@ export function Header({ onMenuClick, onOpenProfile, title, isSidebarVisible }: 
             <Bell className="w-4 h-4" />
             {unreadCount > 0 && (
               <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center px-1 shadow-md shadow-rose-500/50">
-                {unreadCount > 9 ? '9+' : unreadCount}
+                {unreadCount > 9 ? "9+" : unreadCount}
               </span>
             )}
           </button>
@@ -90,7 +101,9 @@ export function Header({ onMenuClick, onOpenProfile, title, isSidebarVisible }: 
               <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-[#12121a] border border-[#1e1e2e] rounded-2xl shadow-2xl z-50 overflow-hidden animate-fade-in">
                 <div className="p-4 border-b border-[#1e1e2e] flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-white text-sm">Notifications</span>
+                    <span className="font-semibold text-white text-sm">
+                      Notifications
+                    </span>
                     {unreadCount > 0 && (
                       <span className="px-2 py-0.5 rounded-full text-xs bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-medium">
                         {unreadCount} new
@@ -120,8 +133,8 @@ export function Header({ onMenuClick, onOpenProfile, title, isSidebarVisible }: 
                         key={n.id}
                         onClick={() => markAsRead(n.id)}
                         className={cn(
-                          'p-3.5 flex gap-3 hover:bg-[#1a1a27] cursor-pointer transition-colors text-left',
-                          !n.isRead && 'bg-indigo-500/[0.03]'
+                          "p-3.5 flex gap-3 hover:bg-[#1a1a27] cursor-pointer transition-colors text-left",
+                          !n.isRead && "bg-indigo-500/[0.03]",
                         )}
                       >
                         <div className="p-2 rounded-xl bg-[#1e1e2e] shrink-0 h-fit">
@@ -159,11 +172,11 @@ export function Header({ onMenuClick, onOpenProfile, title, isSidebarVisible }: 
           title="Click to view full Profile Card"
         >
           <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-violet-500 text-white font-bold flex items-center justify-center text-xs shrink-0 shadow group-hover:scale-105 transition-transform">
-            {user?.name ? getInitials(user.name) : 'PF'}
+            {user?.name ? getInitials(user.name) : "PF"}
           </div>
           <div className="hidden sm:block text-left">
             <p className="text-xs font-semibold text-slate-200 leading-tight group-hover:text-indigo-300 transition-colors">
-              {user?.name || 'PayFlow User'}
+              {user?.name || "PayFlow User"}
             </p>
             <p className="text-[10px] text-emerald-400 font-medium leading-tight">
               ● Verified
