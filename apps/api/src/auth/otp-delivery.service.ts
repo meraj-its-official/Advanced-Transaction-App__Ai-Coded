@@ -124,7 +124,7 @@ export class OtpDeliveryService {
       <p>We received a request to reset your password for your PayFlow digital wallet account. Use the 6-digit verification code below to authorize setting your new password:</p>
       
       <div class="otp-box">
-        <div class="otp-label">Verification Code (Expires in 15 mins)</div>
+        <div class="otp-label">Verification Code (Expires in 03 mins)</div>
         <div class="otp-code">${otp}</div>
       </div>
 
@@ -149,7 +149,7 @@ export class OtpDeliveryService {
           from: fromAddress,
           to,
           subject: `${otp} is your PayFlow password reset verification code`,
-          text: `Your PayFlow password reset verification code is: ${otp}. It expires in 15 minutes. If you did not request this, please secure your account immediately.`,
+          text: `Your PayFlow password reset verification code is: ${otp}. It expires in 03 minutes. If you did not request this, please secure your account immediately.`,
           html: htmlContent,
         });
         this.logger.log(`Real email sent successfully to ${to} (MessageID: ${info.messageId})`);
@@ -178,7 +178,7 @@ export class OtpDeliveryService {
       }
     }
 
-    const messageText = `PayFlow Security: Your password reset verification code is ${otp}. Valid for 15 minutes. Never share this OTP with anyone.`;
+    const messageText = `PayFlow Security: Your password reset verification code is ${otp}. Valid for 03 minutes. Never share this OTP with anyone.`;
 
     // 1. Try Twilio if credentials configured
     const twilioSid = this.config.get<string>('TWILIO_ACCOUNT_SID') || process.env.TWILIO_ACCOUNT_SID;
