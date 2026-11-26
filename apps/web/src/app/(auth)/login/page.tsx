@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
 import { GoogleIcon, GithubIcon } from "@/components/ui/social-icons";
+import { minutesToSeconds, secondsToMinutes } from "date-fns";
 
 const loginSchema = z.object({
   email: z
@@ -104,6 +105,15 @@ export default function LoginPage() {
     smsSent?: boolean;
   }>({});
   const [resendCooldown, setResendCooldown] = useState(0);
+  const formatTime = (totalSeconds: number) => {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+
+    // Agar seconds 10 se kam hain toh aage '0' lagayein (e.g., 1:05)
+    const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
+
+    return `${minutes}:${formattedSeconds}`;
+  };
 
   useEffect(() => {
     if (resendCooldown <= 0) return;
@@ -251,7 +261,7 @@ export default function LoginPage() {
         emailSent: data?.emailSent,
         smsSent: data?.smsSent,
       });
-      setResendCooldown(60);
+      setResendCooldown(minutesToSeconds(2) - 1);
       setForgotStep("reset");
     } catch (err: unknown) {
       const error = err as {
@@ -502,11 +512,11 @@ export default function LoginPage() {
             <div className="p-3.5 rounded-xl bg-gradient-to-br from-indigo-950/60 to-purple-950/40 border border-indigo-500/30 text-xs text-slate-300 space-y-2">
               <div className="flex items-center gap-2 text-indigo-300 font-semibold">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Verification Code Dispatched!</span>
+                <span>Verification Code Sent!</span>
               </div>
               <p className="text-[11px] text-slate-400 leading-relaxed">
-                A 6-digit verification code has been dispatched to your
-                registered contacts:
+                A 6-digit verification code has been sent on your registered
+                contacts:
               </p>
               <div className="flex flex-col sm:flex-row gap-2 pt-1 text-[11px]">
                 {deliveryInfo.maskedEmail && (
@@ -543,7 +553,7 @@ export default function LoginPage() {
                 className="text-indigo-400 hover:text-indigo-300 hover:underline disabled:opacity-50 disabled:no-underline font-medium cursor-pointer"
               >
                 {resendCooldown > 0
-                  ? `Resend in ${resendCooldown}s`
+                  ? `Resend in ${formatTime(resendCooldown)}s`
                   : "Resend Code"}
               </button>
             </div>

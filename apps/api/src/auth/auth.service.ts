@@ -80,7 +80,7 @@ export class AuthService {
   async validateUser(identifier: string, password: string) {
     const clean = identifier.trim();
     const cleanEmail = clean.toLowerCase();
-    const cleanPhone = clean.replace(/^\+91/, '').replace(/\D/g, '');
+    const cleanPhone = clean.replace(/^\+91/, "").replace(/\D/g, "");
 
     const user = await this.prisma.user.findFirst({
       where: {
@@ -183,30 +183,31 @@ export class AuthService {
 
   async setPin(userId: string, pin: string, password?: string) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException("User not found");
     if (password && user.passwordHash) {
       const valid = await bcrypt.compare(password, user.passwordHash);
-      if (!valid) throw new UnauthorizedException('Current password is incorrect');
+      if (!valid)
+        throw new UnauthorizedException("Current password is incorrect");
     }
     if (!/^\d{6}$/.test(pin)) {
-      throw new BadRequestException('Payment PIN must be exactly 6 digits');
+      throw new BadRequestException("Payment PIN must be exactly 6 digits");
     }
     const hashedPin = await bcrypt.hash(pin, 10);
     await this.prisma.user.update({
       where: { id: userId },
       data: { pin: hashedPin },
     });
-    return { success: true, message: 'Payment PIN set successfully' };
+    return { success: true, message: "Payment PIN set successfully" };
   }
 
   async forgotPassword(identifier: string) {
     if (!identifier) {
-      throw new BadRequestException('Email or phone number is required');
+      throw new BadRequestException("Email or phone number is required");
     }
 
     const clean = identifier.trim();
     const cleanEmail = clean.toLowerCase();
-    const cleanPhone = clean.replace(/^\+91/, '').replace(/\D/g, '');
+    const cleanPhone = clean.replace(/^\+91/, "").replace(/\D/g, "");
 
     const user = await this.prisma.user.findFirst({
       where: {
@@ -220,7 +221,9 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new NotFoundException('No account found with this email or phone number');
+      throw new NotFoundException(
+        "No account found with this email or phone number",
+      );
     }
 
     // Invalidate any existing unused tokens for this user
@@ -232,7 +235,7 @@ export class AuthService {
     // Generate a cryptographically random 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const hashedOtp = await bcrypt.hash(otp, 10);
-    const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+    const expiresAt = new Date(Date.now() + 3 * 60 * 1000); // 03 minutes
 
     // Store hashed OTP in database
     await this.prisma.passwordResetToken.create({
@@ -245,29 +248,31 @@ export class AuthService {
 
     // Send real verification code to user's registered Email and Mobile Number simultaneously
     const delivery = await this.otpDelivery.sendPasswordResetOtp({
-      name: user.name || 'PayFlow User',
+      name: user.name || "PayFlow User",
       email: user.email,
       phone: user.phone,
       otp,
     });
 
     // Helper to mask email for security display (e.g. j***n@example.com)
-    const emailParts = user.email.split('@');
-    const maskedUser = emailParts[0].length > 2
-      ? `${emailParts[0][0]}${'*'.repeat(Math.max(2, emailParts[0].length - 2))}${emailParts[0].slice(-1)}`
-      : `${emailParts[0][0]}*`;
-    const maskedEmail = `${maskedUser}@${emailParts[1] || ''}`;
+    const emailParts = user.email.split("@");
+    const maskedUser =
+      emailParts[0].length > 2
+        ? `${emailParts[0][0]}${"*".repeat(Math.max(2, emailParts[0].length - 2))}${emailParts[0].slice(-1)}`
+        : `${emailParts[0][0]}*`;
+    const maskedEmail = `${maskedUser}@${emailParts[1] || ""}`;
 
     // Helper to mask phone (e.g. +91 ******4521)
     const maskedPhone = user.phone
       ? user.phone.length > 4
-        ? `${user.phone.slice(0, 3)} ${'*'.repeat(Math.max(4, user.phone.length - 7))} ${user.phone.slice(-4)}`
+        ? `${user.phone.slice(0, 3)} ${"*".repeat(Math.max(4, user.phone.length - 7))} ${user.phone.slice(-4)}`
         : user.phone
       : undefined;
 
     return {
       success: true,
-      message: 'Password reset verification code has been dispatched to your email and mobile number',
+      message:
+        "Password reset verification code has been dispatched to your email and mobile number",
       maskedEmail,
       maskedPhone,
       emailSent: delivery.emailSent,
@@ -278,12 +283,12 @@ export class AuthService {
 
   async resetPassword(identifier: string, newPassword: string, otp?: string) {
     if (!identifier) {
-      throw new BadRequestException('Email or phone number is required');
+      throw new BadRequestException("Email or phone number is required");
     }
 
     const clean = identifier.trim();
     const cleanEmail = clean.toLowerCase();
-    const cleanPhone = clean.replace(/^\+91/, '').replace(/\D/g, '');
+    const cleanPhone = clean.replace(/^\+91/, "").replace(/\D/g, "");
 
     const user = await this.prisma.user.findFirst({
       where: {
@@ -297,15 +302,15 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException("User not found");
     }
 
     if (!otp) {
-      throw new BadRequestException('Verification code is required');
+      throw new BadRequestException("Verification code is required");
     }
 
     if (!newPassword || newPassword.length < 6) {
-      throw new BadRequestException('Password must be at least 6 characters');
+      throw new BadRequestException("Password must be at least 6 characters");
     }
 
     // Find valid, unused, non-expired tokens for this user
@@ -315,12 +320,14 @@ export class AuthService {
         used: false,
         expiresAt: { gt: new Date() },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       take: 5,
     });
 
     if (!tokens.length) {
-      throw new BadRequestException('No valid reset code found. Please request a new one.');
+      throw new BadRequestException(
+        "No valid reset code found. Please request a new one.",
+      );
     }
 
     // Verify OTP against hashed tokens
@@ -334,7 +341,7 @@ export class AuthService {
     }
 
     if (!validToken) {
-      throw new UnauthorizedException('Invalid or expired verification code');
+      throw new UnauthorizedException("Invalid or expired verification code");
     }
 
     // Mark token as used + reset password atomically
@@ -351,7 +358,8 @@ export class AuthService {
 
     return {
       success: true,
-      message: 'Password has been reset successfully. Please sign in with your new password.',
+      message:
+        "Password has been reset successfully. Please sign in with your new password.",
     };
   }
 
@@ -360,7 +368,7 @@ export class AuthService {
       where: { id: userId },
       include: { wallet: true },
     });
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException("User not found");
 
     // 1. Invalidate all user sessions
     await this.prisma.session.deleteMany({ where: { userId } });
@@ -379,7 +387,10 @@ export class AuthService {
     if (user.wallet) {
       const txnCount = await this.prisma.transaction.count({
         where: {
-          OR: [{ fromWalletId: user.wallet.id }, { toWalletId: user.wallet.id }],
+          OR: [
+            { fromWalletId: user.wallet.id },
+            { toWalletId: user.wallet.id },
+          ],
         },
       });
       hasTransactions = txnCount > 0;
@@ -403,14 +414,14 @@ export class AuthService {
           isActive: false,
           email: `deleted_${userId.slice(-6)}_${Date.now()}@payflow.local`,
           phone: `del_${rand}_${Date.now()}`,
-          name: 'Deleted User',
+          name: "Deleted User",
         },
       });
     }
 
     return {
       success: true,
-      message: 'Account deleted successfully',
+      message: "Account deleted successfully",
     };
   }
 
