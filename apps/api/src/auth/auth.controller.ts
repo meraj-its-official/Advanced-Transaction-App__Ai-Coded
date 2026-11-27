@@ -16,19 +16,22 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { ForgotPasswordDto, ResetPasswordDto } from './dto/forgot-password.dto';
 import { JwtAuthGuard } from './auth.guard';
 import { CurrentUser } from '../decorators/current-user.decorator';
+import { ArcjetAuth, ArcjetSignup, ArcjetPin } from '../arcjet/arcjet.decorators';
 
 @ApiTags('auth')
-@Controller('auth')
+@Controller(['auth', 'api/auth'])
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
+  @ArcjetSignup()
   @ApiOperation({ summary: 'Register a new user' })
   async register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
 
   @Post('login')
+  @ArcjetAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login with email and password' })
   async login(@Body() dto: LoginDto) {
@@ -52,6 +55,7 @@ export class AuthController {
   }
 
   @Post('forgot-password')
+  @ArcjetAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Request password reset code' })
   async forgotPassword(@Body() dto: ForgotPasswordDto) {
@@ -59,6 +63,7 @@ export class AuthController {
   }
 
   @Post('reset-password')
+  @ArcjetAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reset password with verification code' })
   async resetPassword(@Body() dto: ResetPasswordDto) {
@@ -82,6 +87,7 @@ export class AuthController {
   }
 
   @Post('set-pin')
+  @ArcjetPin()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Set or update 6-digit payment PIN' })

@@ -1,8 +1,10 @@
-version: '3.8'
+version: "3.8"
+name: advanced_transaction_app_ai
 services:
   postgres:
     image: postgres:15-alpine
     container_name: payflow_postgres
+    restart: unless-stopped
     environment:
       POSTGRES_DB: payflow
       POSTGRES_USER: payflow
@@ -20,6 +22,7 @@ services:
   redis:
     image: redis:7-alpine
     container_name: payflow_redis
+    restart: unless-stopped
     command: redis-server --appendonly yes
     ports:
       - "6379:6379"

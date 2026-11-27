@@ -12,6 +12,7 @@ import { PaymentsService } from './payments.service';
 import { SendMoneyDto, GetHistoryDto } from './dto/payments.dto';
 import { JwtAuthGuard } from '../auth/auth.guard';
 import { CurrentUser } from '../decorators/current-user.decorator';
+import { ArcjetFinancial } from '../arcjet/arcjet.decorators';
 
 @ApiTags('payments')
 @ApiBearerAuth()
@@ -21,6 +22,7 @@ export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
   @Post('send')
+  @ArcjetFinancial()
   @ApiOperation({ summary: 'Send money to another user by phone number' })
   async sendMoney(
     @CurrentUser('id') userId: string,

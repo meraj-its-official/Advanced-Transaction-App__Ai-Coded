@@ -5,6 +5,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { APP_GUARD } from '@nestjs/core';
 import { PrismaModule } from './prisma.module';
+import { ArcjetSecurityModule } from './arcjet/arcjet.module';
+import { ArcjetSecurityGuard } from './arcjet/arcjet.guard';
 import { AuthModule } from './auth/auth.module';
 import { WalletModule } from './wallet/wallet.module';
 import { PaymentsModule } from './payments/payments.module';
@@ -25,6 +27,7 @@ import { BankAccountsModule } from './bank-accounts/bank-accounts.module';
     EventEmitterModule.forRoot(),
     ScheduleModule.forRoot(),
     PrismaModule,
+    ArcjetSecurityModule,
     AuthModule,
     WalletModule,
     PaymentsModule,
@@ -34,6 +37,10 @@ import { BankAccountsModule } from './bank-accounts/bank-accounts.module';
     BankAccountsModule,
   ],
   providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ArcjetSecurityGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

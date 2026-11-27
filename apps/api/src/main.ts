@@ -16,6 +16,8 @@ import helmet from 'helmet';
 import * as net from 'net';
 import { toNodeHandler } from 'better-auth/node';
 import { auth } from './auth/better-auth';
+import { ArcjetService } from './arcjet/arcjet.service';
+import { ArcjetSecurityLevel } from './arcjet/arcjet.decorators';
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise((resolve) => {
@@ -58,7 +60,53 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With', 'Accept', 'Origin'],
   });
 
-  // Better Auth endpoints mounted at /api/auth/*
+  // Better Auth endpoints mounted at /api/auth/* with Arcjet protection
+  const arcjetService = app.get(ArcjetService);
+  app.use('/api/auth', async (req: any, res: any, next: any) => {
+    const path = req.path || '';
+    const isBetterAuthRoute =
+      path.startsWith('/sign-in') ||
+      path.startsWith('/sign-up') ||
+      path.startsWith('/callback') ||
+      path.startsWith('/session');
+
+    if (isBetterAuthRoute) {
+      const level = path.startsWith('/sign-up')
+        ? ArcjetSecurityLevel.SIGNUP
+        : ArcjetSecurityLevel.AUTH;
+      const decision = await arcjetService.protect(req, level);
+      if (decision && decision.isDenied()) {
+        if (decision.reason.isRateLimit()) {
+          return res.status(429).json({
+            statusCode: 429,
+            error: 'Too Many Requests',
+            message: 'Rate limit exceeded on authentication endpoints. Please wait before retrying.',
+          });
+        }
+        if (decision.reason.isBot()) {
+          return res.status(403).json({
+            statusCode: 403,
+            error: 'Forbidden',
+            message: 'Automated bot traffic is prohibited on this financial application.',
+          });
+        }
+        if (decision.reason.isEmail()) {
+          return res.status(400).json({
+            statusCode: 400,
+            error: 'Bad Request',
+            message: 'Disposable or temporary email domains are not allowed.',
+          });
+        }
+        return res.status(403).json({
+          statusCode: 403,
+          error: 'Forbidden',
+          message: 'Access denied by Arcjet security policy.',
+        });
+      }
+    }
+    next();
+  });
+
   app.use('/api/auth', toNodeHandler(auth));
 
   // Global validation pipe

@@ -10,6 +10,7 @@ import { WalletService } from './wallet.service';
 import { AddMoneyDto, WithdrawDto, SetPinDto } from './dto/wallet.dto';
 import { JwtAuthGuard } from '../auth/auth.guard';
 import { CurrentUser } from '../decorators/current-user.decorator';
+import { ArcjetFinancial, ArcjetPin } from '../arcjet/arcjet.decorators';
 
 @ApiTags('wallet')
 @ApiBearerAuth()
@@ -31,6 +32,7 @@ export class WalletController {
   }
 
   @Post('add-money')
+  @ArcjetFinancial()
   @ApiOperation({ summary: 'Add money to wallet from bank account' })
   async addMoney(
     @CurrentUser('id') userId: string,
@@ -40,6 +42,7 @@ export class WalletController {
   }
 
   @Post('withdraw')
+  @ArcjetFinancial()
   @ApiOperation({ summary: 'Withdraw money from wallet to bank account' })
   async withdraw(
     @CurrentUser('id') userId: string,
@@ -49,6 +52,7 @@ export class WalletController {
   }
 
   @Post('set-pin')
+  @ArcjetPin()
   @ApiOperation({ summary: 'Create or update 6-digit payment PIN' })
   async setPin(
     @CurrentUser('id') userId: string,
