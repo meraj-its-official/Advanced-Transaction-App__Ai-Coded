@@ -26,12 +26,12 @@
 
 **PayFlow** is a production-ready digital wallet platform built as a Turborepo monorepo. It demonstrates a modern fintech stack combining real-time peer-to-peer payments, multi-factor authentication, enterprise-grade API security, and rich analytics — all in a sleek dark-themed UI.
 
-> *"Do not save what is left after spending, but spend what is left after saving."* — Warren Buffett
+> _"Do not save what is left after spending, but spend what is left after saving."_ — Warren Buffett
 
 ### Key Value Propositions
 
 - 🔐 **Bank-grade security** — Arcjet multi-tier rate limiting + shield + bot detection + payment PINs
-- 🔑 **Flexible authentication** — Email/Password, Google OAuth, GitHub OAuth via Better Auth 
+- 🔑 **Flexible authentication** — Email/Password, Google OAuth, GitHub OAuth via Better Auth
 - 💳 **Real-time wallet operations** — Add funds, withdraw, send P2P with live balance updates
 - 📊 **Actionable analytics** — Month-over-month stats, settlement rates, spending category breakdown
 - 📧 **Real OTP delivery** — Password reset via email (Nodemailer/Gmail) + SMS (Twilio / Fast2SMS)
@@ -42,6 +42,7 @@
 ## ✨ Features
 
 ### 🔑 Authentication & Identity
+
 - **Email/Password** sign-up and sign-in with bcrypt hashing
 - **Google OAuth** and **GitHub OAuth** social login via Better Auth
 - **JWT tokens** (access + refresh) with HttpOnly cookie handling
@@ -54,6 +55,7 @@
 - **Delete Account** (soft-delete) — requires typing `DELETE` to confirm
 
 ### 💰 Digital Wallet
+
 - Real-time balance display
 - **Add Money** to wallet (simulated bank debit)
 - **Withdraw** to linked bank account
@@ -61,12 +63,14 @@
 - Wallet ID shown on Profile Card for easy P2P discovery
 
 ### 💸 P2P Payments
+
 - Send money by **phone number** or **wallet ID**
 - Transaction search and **type filter** (all / sent / received)
 - Paginated transaction history with timestamps, amounts, and counterparty info
 - Full transaction detail view
 
 ### 📊 Analytics & Reporting
+
 - **Month-over-month percentage change** for sent, received, and transaction count
 - **Settlement rate** — percentage of transactions fully completed
 - **Weekly trend** sparkline chart
@@ -74,25 +78,28 @@
 - Spending trends bar chart
 
 ### 🏦 Wallet & Payment Sources
+
 - Link bank accounts (account number + IFSC validation)
 - Unlink bank accounts
 - Real empty-state when no accounts are linked
 - Displays linked card details with masked account numbers
 
 ### 🛡️ Security (Arcjet Enterprise)
-| Tier | Applied To | Rules |
-|---|---|---|
-| `FINANCIAL` | Add money, withdraw, send payment | Shield, bot detection, `5 req/min` sliding window |
-| `AUTH` | Login, forgot/reset password | Shield, bot detection, `10 req/5min` sliding window |
-| `SIGNUP` | Register | Shield, bot detection, `validateEmail` (disposable block), `5 req/hour` |
-| `PIN` | Set/verify payment PIN | Shield, bot detection, `3 req/min` sliding window |
-| `EDGE` | All Next.js routes (middleware) | Shield, bot detection, `100 req/min` sliding window |
+
+| Tier        | Applied To                        | Rules                                                                   |
+| ----------- | --------------------------------- | ----------------------------------------------------------------------- |
+| `FINANCIAL` | Add money, withdraw, send payment | Shield, bot detection, `5 req/min` sliding window                       |
+| `AUTH`      | Login, forgot/reset password      | Shield, bot detection, `10 req/5min` sliding window                     |
+| `SIGNUP`    | Register                          | Shield, bot detection, `validateEmail` (disposable block), `5 req/hour` |
+| `PIN`       | Set/verify payment PIN            | Shield, bot detection, `3 req/min` sliding window                       |
+| `EDGE`      | All Next.js routes (middleware)   | Shield, bot detection, `100 req/min` sliding window                     |
 
 - Payment PIN (bcrypt-hashed, separate from account password)
 - Helmet HTTP security headers
 - NestJS built-in throttler as secondary defence
 
 ### 🎨 UI / UX
+
 - **Dark theme** — `#0a0a0f` background, indigo-violet gradient accents
 - **Split-screen auth cover** with 5 rotating financial quotes (auto-advance every 6 s)
 - **Sidebar toggle** — hide/show with animated icon
@@ -102,6 +109,7 @@
 - Toast notifications
 
 ### 🔔 Notifications
+
 - In-app notification centre
 - Fraud alert system with automated detection rules
 
@@ -109,21 +117,21 @@
 
 ## 🛠 Tech Stack
 
-| Layer | Technology |
-|---|---|
-| **Frontend** | Next.js 14 (App Router), React 18, TypeScript 5, Tailwind CSS 3 |
-| **State Management** | Zustand, React Hook Form, Zod |
-| **Charts & Animation** | Recharts, Framer Motion |
-| **Backend** | NestJS 10, TypeScript 5, Passport.js (JWT strategy) |
-| **Authentication** | Better Auth 1.16 (Prisma adapter, Google, GitHub, Email/Password) |
-| **Security** | Arcjet (`@arcjet/node`, `@arcjet/nest`, `@arcjet/next`) |
-| **ORM** | Prisma 5.22 |
-| **Database** | PostgreSQL 16 (Docker) |
-| **Cache / Queue** | Redis 7 (Docker) |
-| **Email** | Nodemailer (Gmail SMTP / standard SMTP) |
-| **SMS** | Twilio / Fast2SMS |
-| **Monorepo** | Turborepo + npm workspaces |
-| **Linting/Formatting** | ESLint, Prettier |
+| Layer                  | Technology                                                        |
+| ---------------------- | ----------------------------------------------------------------- |
+| **Frontend**           | Next.js 14 (App Router), React 18, TypeScript 5, Tailwind CSS 3   |
+| **State Management**   | Zustand, React Hook Form, Zod                                     |
+| **Charts & Animation** | Recharts, Framer Motion                                           |
+| **Backend**            | NestJS 10, TypeScript 5, Passport.js (JWT strategy)               |
+| **Authentication**     | Better Auth 1.16 (Prisma adapter, Google, GitHub, Email/Password) |
+| **Security**           | Arcjet (`@arcjet/node`, `@arcjet/nest`, `@arcjet/next`)           |
+| **ORM**                | Prisma 5.22                                                       |
+| **Database**           | PostgreSQL 16 (Docker)                                            |
+| **Cache / Queue**      | Redis 7 (Docker)                                                  |
+| **Email**              | Nodemailer (Gmail SMTP / standard SMTP)                           |
+| **SMS**                | Twilio / Fast2SMS                                                 |
+| **Monorepo**           | Turborepo + npm workspaces                                        |
+| **Linting/Formatting** | ESLint, Prettier                                                  |
 
 ---
 
@@ -221,12 +229,12 @@ Wallet-Web-App/
 
 ### Prerequisites
 
-| Tool | Version |
-|---|---|
-| Node.js | ≥ 18.x |
-| npm | ≥ 9.x |
-| Docker & Docker Compose | Latest |
-| Git | Latest |
+| Tool                    | Version |
+| ----------------------- | ------- |
+| Node.js                 | ≥ 18.x  |
+| npm                     | ≥ 9.x   |
+| Docker & Docker Compose | Latest  |
+| Git                     | Latest  |
 
 ### 1. Clone the Repository
 
@@ -284,6 +292,7 @@ npm run dev
 Frontend runs at **http://localhost:3007**
 
 > **Tip:** Use Turborepo to run everything from the root:
+>
 > ```bash
 > npx turbo dev
 > ```
@@ -296,10 +305,10 @@ Create a `.env` file in the project root with the following variables:
 
 ### Database & Cache
 
-| Variable | Description | Required |
-|---|---|---|
-| `DATABASE_URL` | PostgreSQL connection string | ✅ |
-| `REDIS_URL` | Redis connection string | ✅ |
+| Variable       | Description                  | Required |
+| -------------- | ---------------------------- | -------- |
+| `DATABASE_URL` | PostgreSQL connection string | ✅       |
+| `REDIS_URL`    | Redis connection string      | ✅       |
 
 ```env
 DATABASE_URL="postgresql://postgres:fake_password_123@localhost:5432/payflow_db"
@@ -308,12 +317,12 @@ REDIS_URL="redis://localhost:6379"
 
 ### JWT Authentication
 
-| Variable | Description | Required |
-|---|---|---|
-| `JWT_SECRET` | Access token signing secret (min 32 chars) | ✅ |
-| `JWT_REFRESH_SECRET` | Refresh token signing secret (min 32 chars) | ✅ |
-| `JWT_EXPIRES_IN` | Access token TTL (e.g. `15m`) | ✅ |
-| `JWT_REFRESH_EXPIRES_IN` | Refresh token TTL (e.g. `7d`) | ✅ |
+| Variable                 | Description                                 | Required |
+| ------------------------ | ------------------------------------------- | -------- |
+| `JWT_SECRET`             | Access token signing secret (min 32 chars)  | ✅       |
+| `JWT_REFRESH_SECRET`     | Refresh token signing secret (min 32 chars) | ✅       |
+| `JWT_EXPIRES_IN`         | Access token TTL (e.g. `15m`)               | ✅       |
+| `JWT_REFRESH_EXPIRES_IN` | Refresh token TTL (e.g. `7d`)               | ✅       |
 
 ```env
 JWT_SECRET="fake_jwt_secret_key_at_least_32_characters_long_12345"
@@ -324,10 +333,10 @@ JWT_REFRESH_EXPIRES_IN="7d"
 
 ### Better Auth
 
-| Variable | Description | Required |
-|---|---|---|
-| `BETTER_AUTH_SECRET` | Better Auth signing secret (min 32 chars) | ✅ |
-| `BETTER_AUTH_URL` | Public URL of the API (for OAuth callbacks) | ✅ |
+| Variable             | Description                                 | Required |
+| -------------------- | ------------------------------------------- | -------- |
+| `BETTER_AUTH_SECRET` | Better Auth signing secret (min 32 chars)   | ✅       |
+| `BETTER_AUTH_URL`    | Public URL of the API (for OAuth callbacks) | ✅       |
 
 ```env
 BETTER_AUTH_SECRET="fake_better_auth_secret_key_32_chars_minimum_abcde"
@@ -336,11 +345,11 @@ BETTER_AUTH_URL="http://localhost:5000"
 
 ### OAuth Providers
 
-| Variable | Description | Required |
-|---|---|---|
-| `GOOGLE_CLIENT_ID` | Google OAuth client ID | ✅ (for Google login) |
+| Variable               | Description                | Required              |
+| ---------------------- | -------------------------- | --------------------- |
+| `GOOGLE_CLIENT_ID`     | Google OAuth client ID     | ✅ (for Google login) |
 | `GOOGLE_CLIENT_SECRET` | Google OAuth client secret | ✅ (for Google login) |
-| `GITHUB_CLIENT_ID` | GitHub OAuth client ID | ✅ (for GitHub login) |
+| `GITHUB_CLIENT_ID`     | GitHub OAuth client ID     | ✅ (for GitHub login) |
 | `GITHUB_CLIENT_SECRET` | GitHub OAuth client secret | ✅ (for GitHub login) |
 
 ```env
@@ -354,9 +363,9 @@ GITHUB_CLIENT_SECRET="fake_github_client_secret_0123456789abcdef0123456789"
 
 **Option A — Gmail (recommended for development):**
 
-| Variable | Description |
-|---|---|
-| `GMAIL_USER` | Your Gmail address |
+| Variable             | Description                     |
+| -------------------- | ------------------------------- |
+| `GMAIL_USER`         | Your Gmail address              |
 | `GMAIL_APP_PASSWORD` | 16-character Gmail App Password |
 
 ```env
@@ -366,14 +375,14 @@ GMAIL_APP_PASSWORD="fake xxxx xxxx xxxx"
 
 **Option B — Custom SMTP:**
 
-| Variable | Description |
-|---|---|
-| `SMTP_HOST` | SMTP server hostname |
-| `SMTP_PORT` | SMTP port (587 or 465) |
+| Variable      | Description               |
+| ------------- | ------------------------- |
+| `SMTP_HOST`   | SMTP server hostname      |
+| `SMTP_PORT`   | SMTP port (587 or 465)    |
 | `SMTP_SECURE` | `true` for TLS (port 465) |
-| `SMTP_USER` | SMTP username |
-| `SMTP_PASS` | SMTP password |
-| `SMTP_FROM` | Sender name & address |
+| `SMTP_USER`   | SMTP username             |
+| `SMTP_PASS`   | SMTP password             |
+| `SMTP_FROM`   | Sender name & address     |
 
 ```env
 SMTP_HOST="smtp.fake-mail-provider.com"
@@ -388,10 +397,10 @@ SMTP_FROM="PayFlow <noreply@fake-domain.com>"
 
 **Option A — Twilio:**
 
-| Variable | Description |
-|---|---|
-| `TWILIO_ACCOUNT_SID` | Twilio Account SID |
-| `TWILIO_AUTH_TOKEN` | Twilio Auth Token |
+| Variable              | Description                        |
+| --------------------- | ---------------------------------- |
+| `TWILIO_ACCOUNT_SID`  | Twilio Account SID                 |
+| `TWILIO_AUTH_TOKEN`   | Twilio Auth Token                  |
 | `TWILIO_PHONE_NUMBER` | Twilio phone number (E.164 format) |
 
 ```env
@@ -402,8 +411,8 @@ TWILIO_PHONE_NUMBER="+10000000000"
 
 **Option B — Fast2SMS (India):**
 
-| Variable | Description |
-|---|---|
+| Variable           | Description                     |
+| ------------------ | ------------------------------- |
 | `FAST2SMS_API_KEY` | Fast2SMS API key from dashboard |
 
 ```env
@@ -412,10 +421,10 @@ FAST2SMS_API_KEY="fake_fast2sms_api_key_0000000000000000"
 
 ### Arcjet Security
 
-| Variable | Description | Required |
-|---|---|---|
-| `ARCJET_KEY` | Arcjet API key from dashboard | ✅ |
-| `ARCJET_MODE` | `LIVE` or `DRY_RUN` | Optional (default: `LIVE`) |
+| Variable      | Description                   | Required                   |
+| ------------- | ----------------------------- | -------------------------- |
+| `ARCJET_KEY`  | Arcjet API key from dashboard | ✅                         |
+| `ARCJET_MODE` | `LIVE` or `DRY_RUN`           | Optional (default: `LIVE`) |
 
 ```env
 ARCJET_KEY="ajkey_fake_sample_key_0000000000000000000"
@@ -430,70 +439,70 @@ ARCJET_MODE="DRY_RUN"
 
 ### Authentication Endpoints
 
-| Method | Path (Dual Route) | Auth | Arcjet Tier | Description |
-|---|---|---|---|---|
-| `POST` | `/api/auth/register` | ❌ | `SIGNUP` | Create a new account (blocks disposable emails & bots) |
-| `POST` | `/api/auth/login` | ❌ | `AUTH` | Sign in with email + password (credential-stuffing defense) |
-| `POST` | `/api/auth/logout` | ✅ JWT | `STANDARD` | Invalidate session (shield & bot protected) |
-| `POST` | `/api/auth/refresh` | ❌ | `STANDARD` | Refresh access token (token bucket rate limited) |
-| `GET` | `/api/auth/me` | ✅ JWT | `STANDARD` | Get current user profile |
-| `POST` | `/api/auth/forgot-password` | ❌ | `AUTH` | Send OTP to email + phone (prevents OTP flooding) |
-| `POST` | `/api/auth/reset-password` | ❌ | `AUTH` | Reset password with OTP (prevents brute-force) |
-| `POST` | `/api/auth/set-pin` | ✅ JWT | `PIN` | Create / change payment PIN (strict 5-attempt window) |
-| `DELETE` | `/api/auth/account` | ✅ JWT | `STANDARD` | Soft-delete account |
+| Method   | Path (Dual Route)           | Auth   | Arcjet Tier | Description                                                 |
+| -------- | --------------------------- | ------ | ----------- | ----------------------------------------------------------- |
+| `POST`   | `/api/auth/register`        | ❌     | `SIGNUP`    | Create a new account (blocks disposable emails & bots)      |
+| `POST`   | `/api/auth/login`           | ❌     | `AUTH`      | Sign in with email + password (credential-stuffing defense) |
+| `POST`   | `/api/auth/logout`          | ✅ JWT | `STANDARD`  | Invalidate session (shield & bot protected)                 |
+| `POST`   | `/api/auth/refresh`         | ❌     | `STANDARD`  | Refresh access token (token bucket rate limited)            |
+| `GET`    | `/api/auth/me`              | ✅ JWT | `STANDARD`  | Get current user profile                                    |
+| `POST`   | `/api/auth/forgot-password` | ❌     | `AUTH`      | Send OTP to email + phone (prevents OTP flooding)           |
+| `POST`   | `/api/auth/reset-password`  | ❌     | `AUTH`      | Reset password with OTP (prevents brute-force)              |
+| `POST`   | `/api/auth/set-pin`         | ✅ JWT | `PIN`       | Create / change payment PIN (strict 5-attempt window)       |
+| `DELETE` | `/api/auth/account`         | ✅ JWT | `STANDARD`  | Soft-delete account                                         |
 
 ### Better Auth Routes (Mounted at `/api/auth/*`)
 
-| Method | Path | Arcjet Tier | Description |
-|---|---|---|---|
-| `POST` | `/api/auth/sign-up/email` | `SIGNUP` | Email signup (disposable email deny + bot block) |
-| `POST` | `/api/auth/sign-in/email` | `AUTH` | Email signin (credential stuffing defense + bot block) |
-| `GET` | `/api/auth/sign-in/google` | `AUTH` | Redirect to Google OAuth |
-| `GET` | `/api/auth/sign-in/github` | `AUTH` | Redirect to GitHub OAuth |
-| `GET` | `/api/auth/callback/google` | `AUTH` | Google OAuth callback |
-| `GET` | `/api/auth/callback/github` | `AUTH` | GitHub OAuth callback |
-| `GET` | `/api/auth/session` | `AUTH` | Get current Better Auth session |
-| `POST` | `/api/auth/sign-out` | `AUTH` | Invalidate Better Auth session |
+| Method | Path                        | Arcjet Tier | Description                                            |
+| ------ | --------------------------- | ----------- | ------------------------------------------------------ |
+| `POST` | `/api/auth/sign-up/email`   | `SIGNUP`    | Email signup (disposable email deny + bot block)       |
+| `POST` | `/api/auth/sign-in/email`   | `AUTH`      | Email signin (credential stuffing defense + bot block) |
+| `GET`  | `/api/auth/sign-in/google`  | `AUTH`      | Redirect to Google OAuth                               |
+| `GET`  | `/api/auth/sign-in/github`  | `AUTH`      | Redirect to GitHub OAuth                               |
+| `GET`  | `/api/auth/callback/google` | `AUTH`      | Google OAuth callback                                  |
+| `GET`  | `/api/auth/callback/github` | `AUTH`      | GitHub OAuth callback                                  |
+| `GET`  | `/api/auth/session`         | `AUTH`      | Get current Better Auth session                        |
+| `POST` | `/api/auth/sign-out`        | `AUTH`      | Invalidate Better Auth session                         |
 
 ### Wallet Endpoints
 
-| Method | Path | Auth | Arcjet Tier | Description |
-|---|---|---|---|---|
-| `GET` | `/api/wallet` | ✅ JWT | — | Get wallet balance & info |
-| `POST` | `/api/wallet/add-money` | ✅ JWT | `FINANCIAL` | Add funds to wallet |
-| `POST` | `/api/wallet/withdraw` | ✅ JWT | `FINANCIAL` | Withdraw to bank |
-| `POST` | `/api/wallet/set-pin` | ✅ JWT | `PIN` | Set wallet payment PIN |
-| `POST` | `/api/wallet/verify-pin` | ✅ JWT | `PIN` | Verify payment PIN |
+| Method | Path                     | Auth   | Arcjet Tier | Description               |
+| ------ | ------------------------ | ------ | ----------- | ------------------------- |
+| `GET`  | `/api/wallet`            | ✅ JWT | —           | Get wallet balance & info |
+| `POST` | `/api/wallet/add-money`  | ✅ JWT | `FINANCIAL` | Add funds to wallet       |
+| `POST` | `/api/wallet/withdraw`   | ✅ JWT | `FINANCIAL` | Withdraw to bank          |
+| `POST` | `/api/wallet/set-pin`    | ✅ JWT | `PIN`       | Set wallet payment PIN    |
+| `POST` | `/api/wallet/verify-pin` | ✅ JWT | `PIN`       | Verify payment PIN        |
 
 ### Payments Endpoints
 
-| Method | Path | Auth | Arcjet Tier | Description |
-|---|---|---|---|---|
-| `POST` | `/api/payments/send` | ✅ JWT | `FINANCIAL` | Send money to another user |
-| `GET` | `/api/payments/history` | ✅ JWT | — | Get paginated transaction history |
-| `GET` | `/api/payments/history/:id` | ✅ JWT | — | Get single transaction detail |
+| Method | Path                        | Auth   | Arcjet Tier | Description                       |
+| ------ | --------------------------- | ------ | ----------- | --------------------------------- |
+| `POST` | `/api/payments/send`        | ✅ JWT | `FINANCIAL` | Send money to another user        |
+| `GET`  | `/api/payments/history`     | ✅ JWT | —           | Get paginated transaction history |
+| `GET`  | `/api/payments/history/:id` | ✅ JWT | —           | Get single transaction detail     |
 
 ### Analytics Endpoints
 
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| `GET` | `/api/analytics/stats` | ✅ JWT | Dashboard stats (totals, % change, settlement rate) |
-| `GET` | `/api/analytics/spending-trends` | ✅ JWT | Weekly/monthly spending trend data |
-| `GET` | `/api/analytics/categories` | ✅ JWT | Spending breakdown by category |
+| Method | Path                             | Auth   | Description                                         |
+| ------ | -------------------------------- | ------ | --------------------------------------------------- |
+| `GET`  | `/api/analytics/stats`           | ✅ JWT | Dashboard stats (totals, % change, settlement rate) |
+| `GET`  | `/api/analytics/spending-trends` | ✅ JWT | Weekly/monthly spending trend data                  |
+| `GET`  | `/api/analytics/categories`      | ✅ JWT | Spending breakdown by category                      |
 
 ### Bank Accounts Endpoints
 
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| `GET` | `/api/bank-accounts` | ✅ JWT | List linked bank accounts |
-| `POST` | `/api/bank-accounts` | ✅ JWT | Link a new bank account |
-| `DELETE` | `/api/bank-accounts/:id` | ✅ JWT | Unlink a bank account |
+| Method   | Path                     | Auth   | Description               |
+| -------- | ------------------------ | ------ | ------------------------- |
+| `GET`    | `/api/bank-accounts`     | ✅ JWT | List linked bank accounts |
+| `POST`   | `/api/bank-accounts`     | ✅ JWT | Link a new bank account   |
+| `DELETE` | `/api/bank-accounts/:id` | ✅ JWT | Unlink a bank account     |
 
 ### Notifications Endpoints
 
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| `GET` | `/api/notifications` | ✅ JWT | Get all notifications |
+| Method  | Path                          | Auth   | Description               |
+| ------- | ----------------------------- | ------ | ------------------------- |
+| `GET`   | `/api/notifications`          | ✅ JWT | Get all notifications     |
 | `PATCH` | `/api/notifications/:id/read` | ✅ JWT | Mark notification as read |
 
 ---
@@ -532,18 +541,19 @@ PayFlow uses [Arcjet](https://arcjet.com/) as a first-class, multi-layered secur
 
 **Security Tiers & Policies:**
 
-| Tier | Enforced On | Rules & Limits |
-|---|---|---|
-| `SIGNUP` | `/register`, `/api/auth/sign-up/*` | • **Email Validation**: Denies disposable, invalid, or MX-less burner domains<br>• **Bot Blocking**: Zero-bot allowance<br>• **Rate Limiting**: Sliding window (5 signups / 10 min) |
-| `AUTH` | `/login`, `/forgot-password`, `/reset-password`, `/api/auth/sign-in/*`, OAuth callbacks | • **Credential Stuffing Defense**: Sliding window (10 attempts / 1 min)<br>• **Bot Detection**: Prohibits automated scrapers<br>• **Shield**: Blocks injection & XSS attacks |
-| `FINANCIAL` | `/wallet/add-money`, `/wallet/withdraw`, `/payments/send` | • **Financial Sliding Window**: Max 15 transactions / 1 min<br>• **Zero-Bot Tolerance**: Automated scripts completely blocked<br>• **Shield**: Active payload analysis |
-| `PIN` | `/auth/set-pin`, `/wallet/set-pin`, `/wallet/verify-pin` | • **High-Sensitivity PIN Protection**: Max 5 attempts / 5 min to prevent PIN brute-forcing<br>• **Bot Blocking** |
-| `STANDARD` | All other API routes (`/me`, `/logout`, `/refresh`, `/history`, `/analytics`, etc.) | • **Token Bucket Rate Limiting**: Capacity 200, refill 100/min<br>• **Arcjet Shield** + **Bot Detection** enabled by default |
-| `EDGE` | Frontend Next.js routes (`middleware.ts`) | • **Shield** + **Bot Detection** + **Sliding Window** (120 req/min) |
+| Tier        | Enforced On                                                                             | Rules & Limits                                                                                                                                                                      |
+| ----------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SIGNUP`    | `/register`, `/api/auth/sign-up/*`                                                      | • **Email Validation**: Denies disposable, invalid, or MX-less burner domains<br>• **Bot Blocking**: Zero-bot allowance<br>• **Rate Limiting**: Sliding window (5 signups / 10 min) |
+| `AUTH`      | `/login`, `/forgot-password`, `/reset-password`, `/api/auth/sign-in/*`, OAuth callbacks | • **Credential Stuffing Defense**: Sliding window (10 attempts / 1 min)<br>• **Bot Detection**: Prohibits automated scrapers<br>• **Shield**: Blocks injection & XSS attacks        |
+| `FINANCIAL` | `/wallet/add-money`, `/wallet/withdraw`, `/payments/send`                               | • **Financial Sliding Window**: Max 15 transactions / 1 min<br>• **Zero-Bot Tolerance**: Automated scripts completely blocked<br>• **Shield**: Active payload analysis              |
+| `PIN`       | `/auth/set-pin`, `/wallet/set-pin`, `/wallet/verify-pin`                                | • **High-Sensitivity PIN Protection**: Max 5 attempts / 5 min to prevent PIN brute-forcing<br>• **Bot Blocking**                                                                    |
+| `STANDARD`  | All other API routes (`/me`, `/logout`, `/refresh`, `/history`, `/analytics`, etc.)     | • **Token Bucket Rate Limiting**: Capacity 200, refill 100/min<br>• **Arcjet Shield** + **Bot Detection** enabled by default                                                        |
+| `EDGE`      | Frontend Next.js routes (`middleware.ts`)                                               | • **Shield** + **Bot Detection** + **Sliding Window** (120 req/min)                                                                                                                 |
 
 ### Better Auth Sessions
 
 Better Auth issues server-side sessions stored in the database alongside JWT tokens. The dual-mode guard:
+
 1. Checks for a valid Better Auth session cookie first
 2. Falls back to Bearer JWT token validation
 
@@ -624,10 +634,10 @@ npx prisma studio
 
 ### Migration History
 
-| Migration | Description |
-|---|---|
-| `20261123110356_add_password_reset_token` | Adds `PasswordResetToken` model for OTP-based password reset |
-| `20261124100000_add_better_auth` | Adds `Account` and `Verification` models for Better Auth; extends `User` for OAuth; extends `Session` |
+| Migration                                 | Description                                                                                           |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `20261123110356_add_password_reset_token` | Adds `PasswordResetToken` model for OTP-based password reset                                          |
+| `20261124100000_add_better_auth`          | Adds `Account` and `Verification` models for Better Auth; extends `User` for OAuth; extends `Session` |
 
 ---
 
@@ -635,22 +645,22 @@ npx prisma studio
 
 Run from the **project root** using Turborepo:
 
-| Command | Description |
-|---|---|
-| `npx turbo dev` | Start all apps in development mode |
-| `npx turbo build` | Build all apps for production |
-| `npx turbo lint` | Lint all packages |
+| Command           | Description                        |
+| ----------------- | ---------------------------------- |
+| `npx turbo dev`   | Start all apps in development mode |
+| `npx turbo build` | Build all apps for production      |
+| `npx turbo lint`  | Lint all packages                  |
 
 Run from individual app directories:
 
-| Directory | Command | Description |
-|---|---|---|
-| `apps/api` | `npm run start:dev` | Start NestJS in watch mode |
-| `apps/api` | `npm run build` | Compile NestJS to dist/ |
-| `apps/web` | `npm run dev` | Start Next.js dev server |
-| `apps/web` | `npm run build` | Build Next.js for production |
-| `packages/database` | `npx prisma studio` | Launch Prisma GUI |
-| `packages/database` | `npx prisma migrate dev` | Run pending migrations |
+| Directory           | Command                  | Description                  |
+| ------------------- | ------------------------ | ---------------------------- |
+| `apps/api`          | `npm run start:dev`      | Start NestJS in watch mode   |
+| `apps/api`          | `npm run build`          | Compile NestJS to dist/      |
+| `apps/web`          | `npm run dev`            | Start Next.js dev server     |
+| `apps/web`          | `npm run build`          | Build Next.js for production |
+| `packages/database` | `npx prisma studio`      | Launch Prisma GUI            |
+| `packages/database` | `npx prisma migrate dev` | Run pending migrations       |
 
 ---
 
@@ -707,8 +717,8 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 <div align="center">
 
-Built the Dream to Ease People's Life ❤️ as a Full-tack Ai Engineer ~ **Md MERAJ ALAM**
+Built the Dream to Ease People's Life ❤️ as a Full-Stack Ai Engineer ~ **Md MERAJ ALAM**
 
-*"An investment in knowledge pays the best interest."* — Benjamin Franklin
+_"An investment in knowledge pays the best interest."_ — Benjamin Franklin
 
 </div>
